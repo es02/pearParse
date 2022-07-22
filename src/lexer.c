@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <stdbool.h> // C-99 implementation or higher
 
-int *pos; //token position in file
+//int *pos; //token position in file
 
 struct circ_buffer {
+  bool full;
   int read_pos;     // Where is the processor up to?
   int write_pos;    // Track where we've written to so we don't accidentally
                     // overwrite where the read head is at
@@ -13,24 +15,25 @@ struct circ_buffer {
 
 int main(int argc, char **argv)
 {
-    if ((fd = open(*argv, 0)) < 0) {
+    if ((fd = fopen(*argv, 0)) < 0) {
         printf("could not open(%s)\n", *argv);
         return -1;
     }
 
     circ_buffer *file_buffer;
+
+    // ensure cursor is at start of file.
+    fseek(fd, 1, SEEK_SET)
 }
 
-/*
-
-void read_in(*file_buffer, *pos)
+void read_in(*file_buffer, *fd)
 {
-  // Do nothing if we haven't processed anything yet
-  if (file_buffer.read_pos == file_buffer.write_pos) {
+  char tmp[1];
+
+  // Do nothing if we haven't processed buffer contents yet
+  if (file_buffer.read_pos == file_buffer.write_pos || file_buffer.full) {
     return 0;
   }
-
-  // do read/write here?
 
   // check for boundary
   if (file_buffer.read_pos == file_buffer.buff_size) {
@@ -39,6 +42,13 @@ void read_in(*file_buffer, *pos)
   if (file_buffer.write_pos == file_buffer.buff_size) {
     file_buffer.write_pos = 0;
   }
-}
 
-*/
+  // ensure we're at the correct position in the file, then read the next character and increment counters
+  fseek(fd, 1, SEEK_CUR);
+  fread(tmp, 1, 1, fd);
+  file_buffer.buffer[file_buffer.read_pos] = tmp;
+  file_buffer.read_pos++
+  if (file_buffer.read_pos == file_buffer.write_pos) {
+    file_buffer.full == true;
+  }
+}
