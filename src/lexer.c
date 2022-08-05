@@ -18,6 +18,9 @@ struct circ_buffer {
                     // zero length *apparently* doesn't actually *mean* zero length.
 }
 
+#define FOR_EACH(item, list) \
+    for (list_node *(item) = (list); (item); (item) = (item)->next)
+
 int main(int argc, char **argv)
 {
     if ((fd = fopen(*argv, 0)) < 0) {
@@ -34,7 +37,8 @@ int main(int argc, char **argv)
 // pass in with: read_in(&file_buffer, fd);
 void read_in(struct circ_buffer *file_buffer, FILE *fd)
 {
-  char tmp[1];
+  char tmp[24];
+  char character[1]
 
   // Do nothing if we haven't processed buffer contents yet
   if (file_buffer->read_pos == file_buffer->write_pos) {
@@ -53,7 +57,7 @@ void read_in(struct circ_buffer *file_buffer, FILE *fd)
   fseek(fd, 1, SEEK_CUR);
   fread(tmp, 1, file_buffer->write_pos - file_buffer->read_pos, fd);
 
-  for (list_node *(character) = (tmp); (character); (character) = (character)->next){
+  FOR_EACH(character, tmp){
     file_buffer->buffer[file_buffer->read_pos] = character;
     file_buffer->read_pos++
   }
