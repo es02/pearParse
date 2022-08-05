@@ -3,6 +3,12 @@
 
 //int *pos; //token position in file
 
+typedef struct list_node list_node;
+struct list_node {
+    list_node *next;
+    void *data;
+};
+
 struct circ_buffer {
   int read_pos;     // Where is the processor up to?
   int write_pos;    // Track where we've written to so we don't accidentally
