@@ -25,7 +25,8 @@ int main(int argc, char **argv)
     fseek(fd, 1, SEEK_SET);
 }
 
-void read_in(struct circ_buffer &file_buffer, FILE *fd)
+// pass in with: read_in(&file_buffer, fd);
+void read_in(struct circ_buffer *file_buffer, FILE *fd)
 {
   char tmp[1];
 
@@ -42,9 +43,12 @@ void read_in(struct circ_buffer &file_buffer, FILE *fd)
     file_buffer->write_pos = 0;
   }
 
-  // ensure we're at the correct position in the file, then read the next character and increment counters
+  // ensure we're at the correct position in the file, then read the next character block and increment counters
   fseek(fd, 1, SEEK_CUR);
-  fread(tmp, 1, 1, fd);
-  file_buffer->buffer[file_buffer->read_pos] = tmp[0];
-  file_buffer->read_pos++
+  fread(tmp, 1, file_buffer->write_pos - file_buffer->read_pos, fd);
+
+  for (list_node *(character) = (tmp); (character); (character) = (character)->next){
+    file_buffer->buffer[file_buffer->read_pos] = character;
+    file_buffer->read_pos++
+  }
 }
